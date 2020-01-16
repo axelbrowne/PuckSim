@@ -1,8 +1,11 @@
 package evolutionsim;
 
+import java.awt.*;
+
 public class GameObject {
     
     double x, y, v, xv, yv, heading, mass, radius, age;
+    Rectangle hitbox;
     
     GameObject (double xcor, double ycor, double m) {
         x = xcor;

@@ -1,28 +1,26 @@
 package evolutionsim;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 //import evolutionsim.EvolutionSim.Puck.Gene;
 
 public class Puck extends GameObject {
 
     public class Gene {
-        String name;
+        double geno;
         // 0-1000
-        double value;
+        double pheno;
         
-        Gene(String n, double v) {
-            name = n;
-            value = (double) v;
+        Gene(double g, double p) {
+            geno = g;
+            pheno = p;
         }
     }
     
     double age;
-    Gene[] traits;
-    //Gene power;
-    //Gene cooldown;
-    //Gene friction;
+    //Gene[] traits;
+    
+    Gene power;
+    Gene freq;
+    Gene friction;
     //Gene untilBored;
     //Gene durBored;
     //Gene numOffspring;
@@ -33,24 +31,14 @@ public class Puck extends GameObject {
     
     Puck(double[] dnaValues, double xcor, double ycor, double mass) {
         super(xcor, ycor, mass);
-        traits = new Gene[Sim.traitNames.length];
-        Gene geneConstructor = new Gene(null, 0);
-        for (int i = 0; i < traits.length; i++) {
-            geneConstructor.name = Sim.traitNames[i];
-            geneConstructor.value = dnaValues[i];
-            traits[i] = geneConstructor;
-        }
-        
+        power = new Gene(dnaValues[0], 0.0);
+        freq = new Gene(dnaValues[1], 0.0);
+        friction = new Gene(dnaValues[2], 0.0);
         age = 0;
     }
     
-    public void draw(Graphics2D g) {
-        g.setColor(Color.BLACK);
-        g.fillOval((int)x, (int)y, (int)radius*2, (int)radius*2);
-    }
-    
     public void age() {
-        age += Sim.dt;
+        age += Sim.dt/60;
     }
     
 }

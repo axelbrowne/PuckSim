@@ -2,7 +2,7 @@ package evolutionsim;
 
 public abstract class Egg extends Puck {
 
-    Egg(int[] dnaValues, double xcor, double ycor, double mass) {
+    Egg(double[] dnaValues, double xcor, double ycor, double mass) {
         super(dnaValues, xcor, ycor, mass);
         //randomizeGenes(dnaValues);
     }
