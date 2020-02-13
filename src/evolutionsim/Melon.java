@@ -17,8 +17,8 @@ public class Melon extends GameObject {
         g.fillArc((int)(drawX), (int)(drawY), (int)(radius*6), (int)(radius*6), 225, 180);
         g.setColor(melonRed);
         g.fillArc((int)(drawX + radius/2), (int)(drawY + radius/2), (int)(radius*5), (int)(radius*5), 225, 180);
-        g.setColor(Color.GREEN);
-        g.fillOval((int)x - 1, (int)y - 1, 2, 2);
+        //g.setColor(Color.GREEN);
+        //g.fillOval((int)x - 1, (int)y - 1, 2, 2);
     }
 
 }

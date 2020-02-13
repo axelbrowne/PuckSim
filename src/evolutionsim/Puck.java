@@ -1,9 +1,5 @@
 package evolutionsim;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-
 //import evolutionsim.EvolutionSim.Puck.Gene;
 
 public class Puck extends GameObject {
@@ -25,7 +21,9 @@ public class Puck extends GameObject {
     Gene power;
     Gene freq;
     Gene friction;
+    Gene vision;
     Gene smell;
+    Gene foodSizePreference;
     //Gene untilBored;
     //Gene durBored;
     //Gene numOffspring;
@@ -38,12 +36,15 @@ public class Puck extends GameObject {
         power = new Gene(dnaValues[0], 0.0);
         freq = new Gene(dnaValues[1], 0.0);
         friction = new Gene(dnaValues[2], 0.0);
-        smell = new Gene(dnaValues[3], 0.0);
+        vision = new Gene(dnaValues[3], 0.0);
+        smell = new Gene(dnaValues[4], 0.0);
+        foodSizePreference = new Gene(dnaValues[5], 0.0);
+        //untilBored = new Gene(dnaValues[6], 0.0);
         age = 0;
     }
     
     public void age() {
-        age += Sim.dt/60;
+        age += Sim.ticklength/60;
     }
     
 }

@@ -16,20 +16,20 @@ public class Sim extends JPanel {
     public static ArrayList<Melon> melonList;
     public static ArrayList<GameObject> objectList;
     public static GameObject observed;
-    public static double dt, spawnChance;
-    public static int canvasSize, tickrate, count;
+    public static double ticklength, spawnChance;
+    public static int canvasSize, count;
     public static String[] traitNames = {"power", "cooldown", "friction"};
     public static boolean pause;
     //public static boolean showHitboxes;
     
     Sim() {
+        //width and height of the square canvas
         canvasSize = 500;
-        tickrate = 10;
-        dt = tickrate/1000.0;
-        count = 10;
-        //showHitboxes = false;
+        // number of seconds in a tick
+        ticklength = 10.0/1000.0;
+        count = 5;
         // melon spawn chance per second
-        spawnChance = 0.3 * dt * 20;
+        spawnChance = 0.3 * ticklength * 10;
         adultList = new ArrayList<Adult>();
         melonList = new ArrayList<Melon>();
         objectList = new ArrayList<GameObject>();
@@ -38,9 +38,11 @@ public class Sim extends JPanel {
     
     public void populate() {
         Adult newAdult;
-        double[] defaultGenes = {500.0, 500.0, 500.0, 400.0};
         for (int i = 0; i < count; i++) {
-            newAdult = new Adult(defaultGenes, Math.random()*500, Math.random()*500, 2000.0);
+            // power, freq, friction, pointSmell, vagueSmell, foodSizePreference, untilBored
+            double[] defaultGenes = {500.0, 500.0, 500.0, 400.0, 1000.0, 500.0, 500.0};
+            double[] randomGenes = {Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0};
+            newAdult = new Adult(randomGenes, Math.random()*500, Math.random()*500, 2000.0);
             adultList.add(newAdult);
             objectList.add(newAdult);
         }
@@ -81,7 +83,7 @@ public class Sim extends JPanel {
                     a.go();
                 }
                 spawnMelon();
-                TimeUnit.MILLISECONDS.sleep(tickrate);
+                TimeUnit.MILLISECONDS.sleep((long) (ticklength * 1000.0));
             }
         }
     }

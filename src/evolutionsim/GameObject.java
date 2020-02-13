@@ -60,6 +60,7 @@ public class GameObject {
             //String newAge = df.format(a.getAge());
             g.drawString(Integer.toString((int)mass) + "   " + time, 500, 0 + fontMetrics.getAscent());
             //g.drawString(time, 500, fontMetrics);
+            a.debug(g);
         }
     }
 }
