@@ -171,7 +171,9 @@ public class Adult extends Puck {
     public void draw(Graphics2D g) {
         drawX = x - radius;
         drawY = y - radius;
-        g.setColor(Color.PINK);
+        Color tail = new Color ((int)(power.geno * 0.256), (int)(freq.geno * 0.256), (int)(friction.geno * 0.256));
+        Color body = new Color ((int)(vision.geno * 0.256), (int)(smell.geno * 0.256), (int)(foodSizePreference.geno * 0.256));
+        g.setColor(tail);
         int[] xDraw = {
                 (int)((x)+Math.cos(heading)*radius*(3/4)),
                 (int)((x)-Math.cos(heading+Math.PI/6)*(radius+radius*(1.5*power.geno/1000)+radius*(cooldown/freq.pheno))),
@@ -181,7 +183,7 @@ public class Adult extends Puck {
                 (int)((y)-Math.sin(heading+Math.PI/6)*(radius+radius*(1.5*power.geno/1000)+radius*(cooldown/freq.pheno))),
                 (int)((y)-Math.sin(heading-Math.PI/6)*(radius+radius*(1.5*power.geno/1000)+radius*(cooldown/freq.pheno)))};
         g.fillPolygon(xDraw, yDraw, 3);
-        g.setColor(Color.BLACK);
+        g.setColor(body);
         g.fillOval((int)drawX, (int)drawY, (int)radius*2, (int)radius*2);
     }
 }
