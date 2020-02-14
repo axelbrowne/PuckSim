@@ -60,7 +60,7 @@ public class Adult extends Puck {
         yv = Math.sin(heading)*v;
         x = x + xv*(Sim.ticklength);
         y = y + yv*(Sim.ticklength);
-        if ((int) x < 0 || (int) y < 0 || (int) x > Sim.canvasSize || (int) y > Sim.canvasSize) {
+        if ((int) x < 0 || (int) y < 0 || (int) x > Sim.canvasWidth || (int) y > Sim.canvasHeight) {
             heading += Math.PI;
         }
     }

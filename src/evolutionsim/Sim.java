@@ -17,19 +17,20 @@ public class Sim extends JPanel {
     public static ArrayList<GameObject> objectList;
     public static GameObject observed;
     public static double ticklength, spawnChance;
-    public static int canvasSize, count;
+    public static int canvasWidth, canvasHeight, count;
     public static String[] traitNames = {"power", "cooldown", "friction"};
     public static boolean pause;
     //public static boolean showHitboxes;
     
     Sim() {
         //width and height of the square canvas
-        canvasSize = 500;
+        canvasWidth = 1250;
+        canvasHeight = 650;
         // number of seconds in a tick
         ticklength = 10.0/1000.0;
-        count = 50;
+        count = 500;
         // melon spawn chance per second
-        spawnChance = 0.5 * ticklength * 50;
+        spawnChance = 0.5 * ticklength * 250;
         adultList = new ArrayList<Adult>();
         melonList = new ArrayList<Melon>();
         objectList = new ArrayList<GameObject>();
@@ -42,7 +43,7 @@ public class Sim extends JPanel {
             // power, freq, friction, pointSmell, vagueSmell, foodSizePreference, untilBored
             double[] defaultGenes = {500.0, 500.0, 500.0, 400.0, 1000.0, 500.0, 500.0};
             double[] randomGenes = {Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0};
-            newAdult = new Adult(randomGenes, Math.random()*500, Math.random()*500, 2000.0);
+            newAdult = new Adult(randomGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 2000.0);
             adultList.add(newAdult);
             objectList.add(newAdult);
         }
@@ -51,7 +52,7 @@ public class Sim extends JPanel {
     public static void spawnMelon() {
         Melon newMelon;
         if (Math.random() <= spawnChance) {
-            newMelon = new Melon(Math.random()*canvasSize, Math.random()*canvasSize, Math.random()*200);
+            newMelon = new Melon(Math.random()*canvasWidth, Math.random()*canvasHeight, Math.random()*200);
             melonList.add(newMelon);
             objectList.add(newMelon);
         }
@@ -63,7 +64,7 @@ public class Sim extends JPanel {
         JFrame simulation = new JFrame("Simulation");
         Sim sim = new Sim();
         simulation.add(sim);
-        simulation.setSize(canvasSize, canvasSize);
+        simulation.setSize(canvasWidth, canvasHeight);
         simulation.setVisible(true);
         simulation.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //frame.pack();
@@ -104,7 +105,7 @@ public class Sim extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g.setColor(Color.BLACK);
-        g.drawRect(0, 0, canvasSize, canvasSize);
+        g.drawRect(0, 0, canvasWidth, canvasHeight);
         for (int i = 0; i < objectList.size(); i++) {
             GameObject o = objectList.get(i);
             o.draw(g2d);
