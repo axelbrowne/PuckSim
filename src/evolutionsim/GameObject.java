@@ -49,17 +49,23 @@ public class GameObject {
     public void displayInfo(Graphics2D g) {
         if (this instanceof Adult) {
             Adult a = (Adult) this;
-            g.setFont(new Font("Serif", Font.PLAIN, 12));
+            int fontsize = 12;
+            g.setFont(new Font("Courier", Font.PLAIN, fontsize));
             g.setColor(Color.BLACK);
-            FontMetrics fontMetrics= g.getFontMetrics();
+            FontMetrics fontMetrics = g.getFontMetrics();
             
             int hr = (int) a.getAge() / 60;
             int min = (int) a.getAge() % 60;
             int sec = (int) (60 * (a.getAge() - Math.floor(a.getAge())));
             String time = Sim.formatTime(hr, min, sec);            
-            //String newAge = df.format(a.getAge());
-            g.drawString(Integer.toString((int)mass) + "   " + time, 500, 0 + fontMetrics.getAscent());
-            //g.drawString(time, 500, fontMetrics);
+            g.drawString("Mass:       " + Integer.toString((int)mass), 0, 0 + fontMetrics.getAscent());
+            g.drawString("Age:        " + time, 0, fontMetrics.getAscent() + fontsize);
+            g.drawString("Power:      " + (int) a.power.geno, 0, fontMetrics.getAscent() + fontsize*3);
+            g.drawString("Frequency:  " + (int) a.freq.geno, 0, fontMetrics.getAscent() + fontsize*4);
+            g.drawString("Friction:   " + (int) a.friction.geno, 0, fontMetrics.getAscent() + fontsize*5);
+            g.drawString("Vision:     " + (int) a.vision.geno, 0, fontMetrics.getAscent() + fontsize*6);
+            g.drawString("Smell:      " + (int) a.smell.geno, 0, fontMetrics.getAscent() + fontsize*7);
+            g.drawString("MelSizPref: " + (int) a.foodSizePreference.geno, 0, fontMetrics.getAscent() + fontsize*8);
             a.debug(g);
         }
     }

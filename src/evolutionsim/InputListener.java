@@ -11,9 +11,7 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println(e);
-        if (e.getKeyChar() ==  'a') {
-            System.out.println("pause");
+        if (e.getKeyChar() ==  ' ') {
             Sim.pause = !Sim.pause;
         }
         // TODO Auto-generated method stub
@@ -34,11 +32,8 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        //System.out.println("click!");
         Point p = MouseInfo.getPointerInfo().getLocation();
         for (Adult a : Sim.adultList) {
-            //System.out.println("mouse: (" + p.x + "," + p.y + ")  adult: (" + a.x + "," + a.y + ")");
-            //System.out.println(Math.hypot((p.x - a.x), (p.y - a.y)));
             if (Math.hypot((p.x - a.x), (p.y - 23 - a.y)) < a.radius) {
                 Sim.observed = a;
             }

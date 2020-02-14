@@ -6,24 +6,21 @@ import java.awt.*;
 public class Adult extends Puck {
     
     double cooldown;
-    //double timeUnitlBored;
-    //Gene[] translation;
 
     Adult(double[] dnaValues, double xcor, double ycor, double mass) {
         super(dnaValues, xcor, ycor, mass);
         translate();
         cooldown = 0;
         age = 0;
-        //timeUntilBored = untilBored.geno;
     }
     
     public void translate() {
         // increase with cube of mass
-        power.pheno = power.geno * 50000.0;
+        power.pheno = power.geno * 30000.0;
         // decrease with age
-        freq.pheno = (1000.0 - freq.geno) / 600.0;
+        freq.pheno = (1000.0 - freq.geno) / 1200.0;
         // increase with square of mass
-        friction.pheno = friction.geno * -600.0;
+        friction.pheno = friction.geno * -50.0;
         //
         vision.pheno = vision.geno / 4;
         //
@@ -35,15 +32,11 @@ public class Adult extends Puck {
     }
     
     public void updateDynamicVars() {
-        /**
-        if (timeUntilBored <= 0) {
-            heading = 2*Math.PI*Math.random();
-        }
-        timeUntilBored -= Sim.ticklength;
-        **/
+        if (Sim.pause) { return; }
         if (cooldown <= 0) {
             v += power.pheno*Sim.ticklength/mass;
             seekFood();
+            mass -= (power.pheno / 2000000);
             cooldown = freq.pheno;
         }
         cooldown -= Sim.ticklength;
@@ -51,7 +44,6 @@ public class Adult extends Puck {
         else { mass -= Sim.ticklength * (mass / 100); }
         age += Sim.ticklength/60;
         updateRadius();
-        //age(); 
     }
     
 
@@ -63,7 +55,7 @@ public class Adult extends Puck {
     }
     
     public void motion() {
-        v = Math.max(0, v + (friction.pheno*Sim.ticklength)/mass);
+        v = Math.max(0, v + ((-0.1*v*v) + friction.pheno*Sim.ticklength)/mass);
         xv = Math.cos(heading)*v;
         yv = Math.sin(heading)*v;
         x = x + xv*(Sim.ticklength);
@@ -79,25 +71,11 @@ public class Adult extends Puck {
             towardsVision();
         } else if (smell() != null) {
             towardsSmell();
-        } else {
-            heading = Math.random() * 2 * Math.PI;
-        }
-    }
-    
-    public void towardsSmell() {
-        if (smell() != null) {
-            heading = smell()[3];
-        }
-    }
-    
-    public void towardsVision() {
-        Melon m = see();
-        if (m != null) {
-            heading = getHeadingTowards(m);
         }
     }
     
     public Melon see() {
+        if (Sim.pause) { return null; }
         if (Sim.melonList.size() == 0) { return null; }
         double target, potential;
         Melon t = Sim.melonList.get(0);
@@ -110,8 +88,15 @@ public class Adult extends Puck {
         }
         if (getDistanceTo(t) > vision.pheno) {
             return null;
-        } else {
-            return t;
+        }
+        mass -= getDistanceTo(t) * (1 / 10000);
+        return t;
+    }
+    
+    public void towardsVision() {
+        Melon m = see();
+        if (m != null) {
+            heading = getHeadingTowards(m);
         }
     }
     
@@ -120,16 +105,8 @@ public class Adult extends Puck {
     }
     
     public double[] smell() {
-        //double xVector = 0.0;
-        //double yVector = 0.0;
-        /**
-        double smell = 0.0;
-        double angle = 0.0;
-        double newSmell = 0.0;
-        double newAngle = 0.0;
-        **/
-        
-        double xcor, ycor, newX, newY, strength, newStrength;
+        if (Sim.pause) { return null; }
+        double xcor, ycor, strength, newX, newY, newStrength;
         xcor = ycor = newX = newY = strength = newStrength = 0.0;
         for (Melon m : Sim.melonList) {
             newStrength = melonScore(m);
@@ -138,22 +115,20 @@ public class Adult extends Puck {
             newY = (m.y - y) * newStrength;
             xcor += newX;
             ycor += newY;
-            
-            
-            /**
-            newSmell = (Math.pow(m.mass, foodSizePreference.pheno))/((Math.hypot(m.x - x, m.y - y) * (Math.hypot(m.x - x, m.y - y))));
-            newAngle = (Math.atan2(m.y - y, m.x - x));
-            smell += newSmell;
-            System.out.println((int)((180 / Math.PI)*(newAngle-angle)));
-            angle += (newSmell/(smell))*(newAngle - angle);
-            **/
         }
         // [xcor, ycor, dist, heading]
         double[] output = new double[]{xcor, ycor, Math.hypot(xcor, ycor), Math.atan2(ycor, xcor)};
         if (output[0] > smell.pheno) {
             return null;
         }
+        mass -= output[2] * (1 / 20000);
         return output;
+    }
+    
+    public void towardsSmell() {
+        if (smell() != null) {
+            heading = smell()[3];
+        }
     }
 
     public boolean collisionCheck() {
@@ -208,8 +183,5 @@ public class Adult extends Puck {
         g.fillPolygon(xDraw, yDraw, 3);
         g.setColor(Color.BLACK);
         g.fillOval((int)drawX, (int)drawY, (int)radius*2, (int)radius*2);
-        //g.setColor(Color.GREEN);
-        //g.fillOval((int)x - 1, (int)y - 1, 2, 2);
-        //debug(g);
     }
 }

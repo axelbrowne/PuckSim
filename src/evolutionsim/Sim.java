@@ -27,9 +27,9 @@ public class Sim extends JPanel {
         canvasSize = 500;
         // number of seconds in a tick
         ticklength = 10.0/1000.0;
-        count = 5;
+        count = 50;
         // melon spawn chance per second
-        spawnChance = 0.3 * ticklength * 10;
+        spawnChance = 0.5 * ticklength * 50;
         adultList = new ArrayList<Adult>();
         melonList = new ArrayList<Melon>();
         objectList = new ArrayList<GameObject>();
@@ -79,7 +79,8 @@ public class Sim extends JPanel {
         while (adultList.size() > 0) {
             simulation.repaint();
             if (!pause) {
-                for (Adult a : adultList) {
+                for (int i = 0; i < adultList.size(); i++) {
+                    Adult a = adultList.get(i);
                     a.go();
                 }
                 spawnMelon();
@@ -104,12 +105,12 @@ public class Sim extends JPanel {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, canvasSize, canvasSize);
-        for (GameObject o : objectList) {
+        for (int i = 0; i < objectList.size(); i++) {
+            GameObject o = objectList.get(i);
             o.draw(g2d);
             if (observed != null && observed.equals(o)) {
                 o.displayInfo(g2d);
             }
         }
-
     }
 }
