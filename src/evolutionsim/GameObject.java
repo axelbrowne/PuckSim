@@ -23,10 +23,27 @@ public class GameObject {
     
     public void die() {
         Sim.objectList.remove(this);
+        
         if (this instanceof Melon) {
             Sim.melonList.remove(this);
-        } else if (this instanceof Adult) {
-            Sim.adultList.remove(this);
+            
+        } else if (this instanceof Puck) {
+            Sim.puckList.remove(this);
+            
+            if (this instanceof Adult) {
+                Sim.adultList.remove(this);
+                Adult a = (Adult) this;
+                for (int i = 0; i < a.children.size(); i++) {
+                    a.children.get(i).parents.remove(i);
+                }
+                
+            } else if (this instanceof Egg) {
+                Egg e = (Egg) this;
+                for (int i = 0; i < e.parents.size(); i++) {
+                    e.parents.get(i).children.remove(this);
+                }
+                Sim.eggList.remove(this);
+            }
         }
     }
     
@@ -54,18 +71,22 @@ public class GameObject {
             g.setColor(Color.BLACK);
             FontMetrics fontMetrics = g.getFontMetrics();
             
-            int hr = (int) a.getAge() / 60;
-            int min = (int) a.getAge() % 60;
-            int sec = (int) (60 * (a.getAge() - Math.floor(a.getAge())));
+            int hr = (int) a.age / 60;
+            int min = (int) a.age % 60;
+            int sec = (int) (60 * (a.age - Math.floor(a.age)));
             String time = Sim.formatTime(hr, min, sec);            
             g.drawString("Mass:       " + Integer.toString((int)mass), 0, 0 + fontMetrics.getAscent());
             g.drawString("Age:        " + time, 0, fontMetrics.getAscent() + fontsize);
-            g.drawString("Power:      " + (int) a.power.geno, 0, fontMetrics.getAscent() + fontsize*3);
-            g.drawString("Frequency:  " + (int) a.freq.geno, 0, fontMetrics.getAscent() + fontsize*4);
-            g.drawString("Friction:   " + (int) a.friction.geno, 0, fontMetrics.getAscent() + fontsize*5);
-            g.drawString("Vision:     " + (int) a.vision.geno, 0, fontMetrics.getAscent() + fontsize*6);
-            g.drawString("Smell:      " + (int) a.smell.geno, 0, fontMetrics.getAscent() + fontsize*7);
-            g.drawString("MelSizPref: " + (int) a.foodSizePreference.geno, 0, fontMetrics.getAscent() + fontsize*8);
+            g.drawString("Generation: " + a.gen, 0, fontMetrics.getAscent() + fontsize*2);
+            g.drawString("Mate:       " + (a.mate != null), 0, fontMetrics.getAscent() + fontsize*3);
+            g.drawString("NumChildren:" + a.children.size(), 0, fontMetrics.getAscent() + fontsize*4);
+
+            g.drawString("Power:      " + (int) a.power.geno, 0, fontMetrics.getAscent() + fontsize*6);
+            g.drawString("Frequency:  " + (int) a.freq.geno, 0, fontMetrics.getAscent() + fontsize*7);
+            g.drawString("Friction:   " + (int) a.friction.geno, 0, fontMetrics.getAscent() + fontsize*8);
+            g.drawString("Vision:     " + (int) a.vision.geno, 0, fontMetrics.getAscent() + fontsize*9);
+            g.drawString("Smell:      " + (int) a.smell.geno, 0, fontMetrics.getAscent() + fontsize*10);
+            g.drawString("MelSizPref: " + (int) a.melSizePref.geno, 0, fontMetrics.getAscent() + fontsize*11);
             a.debug(g);
         }
     }

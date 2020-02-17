@@ -1,41 +1,34 @@
 package evolutionsim;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class Adult extends Puck {
     
     double cooldown;
+    ArrayList<Egg> children;
+    ArrayList<Adult> mateable;
+    double age;
+    Adult mate;
 
     Adult(double[] dnaValues, double xcor, double ycor, double mass) {
         super(dnaValues, xcor, ycor, mass);
         translate();
         cooldown = 0;
         age = 0;
+        children = new ArrayList<Egg>();
+        mateable = new ArrayList<Adult>();
+        Adult mate = null;
     }
     
-    public void translate() {
-        // increase with cube of mass
-        power.pheno = power.geno * 30000.0;
-        // decrease with age
-        freq.pheno = (1000.0 - freq.geno) / 1200.0;
-        // increase with square of mass
-        friction.pheno = friction.geno * -50.0;
-        //
-        vision.pheno = vision.geno / 4;
-        //
-        smell.pheno = vision.pheno + smell.geno / 4;
-        //
-        foodSizePreference.pheno = 1 + foodSizePreference.geno / 1000;
-        //
-        //untilBored.pheno = untilBored.geno * 6;
-    }
-    
-    public void updateDynamicVars() {
+    public void updateVars() {
         if (Sim.pause) { return; }
         if (cooldown <= 0) {
             v += power.pheno*Sim.ticklength/mass;
-            seekFood();
+            determineMateable();
+            pursue();
+            seek();
             mass -= (power.pheno / 2000000);
             cooldown = freq.pheno;
         }
@@ -46,11 +39,10 @@ public class Adult extends Puck {
         updateRadius();
     }
     
-
-    
     public void go() {
-        updateDynamicVars();
+        updateVars();
         motion();
+        mateCheck();
         collisionCheck();
     }
     
@@ -64,6 +56,50 @@ public class Adult extends Puck {
             heading += Math.PI;
         }
     }
+    
+    public void determineMateable() {
+        if (children.size() > 0) { return; }
+        for (Adult a : Sim.adultList) {
+            if (a.children.size() == 0 && !a.equals(this)) {
+                if (mateScore(a) > sexWill.pheno) {
+                    mateable.add(a);
+                }
+            }
+        }
+    }
+    
+    public void pursue() {
+        for (Adult a : mateable) {
+            if (a.mateable.contains(this) && Sim.average(childCount.pheno, a.childCount.pheno) > 0) {
+                mate = a;
+                a.mate = this;
+                mateable = new ArrayList<Adult>();
+                a.mateable = new ArrayList<Adult>();
+            }
+        }
+    }
+    
+    public void mate() {
+        heading = getHeadingTowards(mate);        
+    }
+    
+    private double mateScore(Adult potMate) {
+        return mass + (potMate.mass * potMate.mass)/getDistanceTo(potMate);
+    }
+    
+    public void seek() {
+        if (mate != null) {
+            System.out.println("trying to mate");
+            mate();
+        } else if (children.size() > 0) {
+            System.out.println("feeding kids");
+            // feed the kids!
+        } else {
+            System.out.println("seeking food");
+            seekFood();
+        }
+    }
+    
     
     public void seekFood() {
         if (Sim.melonList.size() == 0) { return; }
@@ -101,9 +137,9 @@ public class Adult extends Puck {
     }
     
     public double melonScore(Melon m) {
-        return (Math.pow(m.mass, foodSizePreference.pheno) / (getDistanceTo(m) * getDistanceTo(m)));
+        return (Math.pow(m.mass, melSizePref.pheno) / (getDistanceTo(m) * getDistanceTo(m)));
     }
-    
+        
     public double[] smell() {
         if (Sim.pause) { return null; }
         double xcor, ycor, strength, newX, newY, newStrength;
@@ -130,6 +166,17 @@ public class Adult extends Puck {
             heading = smell()[3];
         }
     }
+    
+    public void mateCheck() {
+        if (Sim.adultList.size() < 2) { return; }
+        for (Adult a : Sim.adultList) {
+            if (getDistanceTo(a) <= radius + a.radius && mate == a) {
+                Sim.layEggs(this, a);
+                mate = null;
+                a.mate = null;
+            }
+        }
+    }
 
     public boolean collisionCheck() {
         if (Sim.melonList.size() == 0) {
@@ -145,10 +192,6 @@ public class Adult extends Puck {
         return false;
     }
     
-    public double getAge() {
-        return age;
-    }
-    
     public void debug(Graphics2D g) {
         if (Sim.melonList.size() == 0) { return; }
         if (see() != null) {
@@ -161,10 +204,11 @@ public class Adult extends Puck {
             g.setColor(Color.CYAN);
             g.drawLine((int)x, (int)y, (int) see().x, (int) see().y);  
         } else if (smell() != null) {
-            g.setColor(Color.MAGENTA);
-            g.drawLine((int)x, (int)y, (int)(x + 5 * smell()[0]), (int)(y + 5 * smell()[1]));
+            g.setColor(Color.MAGENTA);            
+            //g.drawLine((int)x, (int)y, (int)(x + 5 * Math.pow(smell()[2], Math.log(mass)/Math.log(melSizePref.pheno)) * Math.cos(smell()[3])), (int)(y + 5 * Math.pow(smell()[2], Math.log(mass)/Math.log(melSizePref.pheno)) * Math.sin(smell()[3])));
+            g.drawLine((int)x, (int)y, (int)(x + 15 * smell()[0]), (int)(y + 15 * smell()[1]));
         } else {
-            heading = Math.random() * 2 * Math.PI;
+            //heading = Math.random() * 2 * Math.PI;
         }
     }
     
@@ -172,7 +216,7 @@ public class Adult extends Puck {
         drawX = x - radius;
         drawY = y - radius;
         Color tail = new Color ((int)(power.geno * 0.256), (int)(freq.geno * 0.256), (int)(friction.geno * 0.256));
-        Color body = new Color ((int)(vision.geno * 0.256), (int)(smell.geno * 0.256), (int)(foodSizePreference.geno * 0.256));
+        Color body = new Color ((int)(vision.geno * 0.256), (int)(smell.geno * 0.256), (int)(melSizePref.geno * 0.256));
         g.setColor(tail);
         int[] xDraw = {
                 (int)((x)+Math.cos(heading)*radius*(3/4)),

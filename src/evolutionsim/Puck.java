@@ -15,7 +15,7 @@ public class Puck extends GameObject {
         }
     }
     
-    double age;
+    int gen;
     //Gene[] traits;
     
     Gene power;
@@ -23,13 +23,17 @@ public class Puck extends GameObject {
     Gene friction;
     Gene vision;
     Gene smell;
-    Gene foodSizePreference;
+    Gene melSizePref;
     //Gene untilBored;
     //Gene durBored;
-    //Gene numOffspring;
-    //Gene maturationTime;
-    //Gene sexualWillingness;
-    //Gene chanceOfMutation;
+    // sexual willingness
+    Gene sexWill;
+    // number of children per reproduction
+    Gene childCount;
+    // time until maturation
+    Gene maturation;
+    // chance that a gene will mutate after reproduction
+    Gene mutationChance;
     
     Puck(double[] dnaValues, double xcor, double ycor, double mass) {
         super(xcor, ycor, mass);
@@ -38,9 +42,36 @@ public class Puck extends GameObject {
         friction = new Gene(dnaValues[2], 0.0);
         vision = new Gene(dnaValues[3], 0.0);
         smell = new Gene(dnaValues[4], 0.0);
-        foodSizePreference = new Gene(dnaValues[5], 0.0);
+        melSizePref = new Gene(dnaValues[5], 0.0);
+        sexWill = new Gene(dnaValues[6], 0.0);
+        childCount = new Gene(dnaValues[7], 0.0);
+        maturation = new Gene(dnaValues[8], 0.0);
+        mutationChance = new Gene(dnaValues[9], 0.0);
         //untilBored = new Gene(dnaValues[6], 0.0);
-        age = 0;
+        gen = 0;
+    }
+    
+    public void translate() {
+        // increase with cube of mass
+        power.pheno = power.geno * 30000.0;
+        // decrease with age
+        freq.pheno = (1000.0 - freq.geno) / 1200.0;
+        // increase with square of mass
+        friction.pheno = friction.geno * -50.0;
+        //
+        vision.pheno = vision.geno / 4;
+        //
+        smell.pheno = vision.pheno + smell.geno / 4;
+        //
+        melSizePref.pheno = (-500 + melSizePref.geno) / 500;
+        //
+        sexWill.pheno = sexWill.geno;
+        childCount.pheno = childCount.geno / 200;
+        maturation.pheno = maturation.geno * 6;
+        // we do this because we use this in a few different spots
+        // and i want to remember to keep it consistent in case\
+        // a chance is made
+        mutationChance.pheno = Sim.translateMutationChance(mutationChance.geno);
     }
     
     public void age() {
