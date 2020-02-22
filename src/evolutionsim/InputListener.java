@@ -32,12 +32,17 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Point p = MouseInfo.getPointerInfo().getLocation();
-        for (Adult a : Sim.adultList) {
-            if (Math.hypot((p.x - a.x), (p.y - 23 - a.y)) < a.radius) {
-                Sim.observed = a;
+        Point m = MouseInfo.getPointerInfo().getLocation();
+        for (int i = 0; i < Sim.puckList.size(); i++) {
+            Puck p = Sim.puckList.get(i);
+            if (Math.hypot((m.x - p.x), (m.y - 23 - p.y)) < p.radius) {
+                Sim.observed = p;
+                break;
             }
-        }        
+            if (i == Sim.puckList.size() - 1) {
+                Sim.observed = null;
+            }
+        }
     }
 
     @Override

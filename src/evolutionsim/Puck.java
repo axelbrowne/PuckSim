@@ -27,7 +27,7 @@ public class Puck extends GameObject {
     //Gene untilBored;
     //Gene durBored;
     // sexual willingness
-    Gene sexWill;
+    Gene standards;
     // number of children per reproduction
     Gene childCount;
     // time until maturation
@@ -35,7 +35,7 @@ public class Puck extends GameObject {
     // chance that a gene will mutate after reproduction
     Gene mutationChance;
     
-    Puck(double[] dnaValues, double xcor, double ycor, double mass) {
+    Puck(double[] dnaValues, double xcor, double ycor, double mass, int generation) {
         super(xcor, ycor, mass);
         power = new Gene(dnaValues[0], 0.0);
         freq = new Gene(dnaValues[1], 0.0);
@@ -43,12 +43,12 @@ public class Puck extends GameObject {
         vision = new Gene(dnaValues[3], 0.0);
         smell = new Gene(dnaValues[4], 0.0);
         melSizePref = new Gene(dnaValues[5], 0.0);
-        sexWill = new Gene(dnaValues[6], 0.0);
+        standards = new Gene(dnaValues[6], 0.0);
         childCount = new Gene(dnaValues[7], 0.0);
         maturation = new Gene(dnaValues[8], 0.0);
         mutationChance = new Gene(dnaValues[9], 0.0);
         //untilBored = new Gene(dnaValues[6], 0.0);
-        gen = 0;
+        gen = generation;
     }
     
     public void translate() {
@@ -65,17 +65,12 @@ public class Puck extends GameObject {
         //
         melSizePref.pheno = (-500 + melSizePref.geno) / 500;
         //
-        sexWill.pheno = sexWill.geno;
+        standards.pheno = standards.geno * 10;
         childCount.pheno = childCount.geno / 200;
-        maturation.pheno = maturation.geno * 6;
+        maturation.pheno = maturation.geno / 2000;
         // we do this because we use this in a few different spots
         // and i want to remember to keep it consistent in case\
         // a chance is made
         mutationChance.pheno = Sim.translateMutationChance(mutationChance.geno);
     }
-    
-    public void age() {
-        age += Sim.ticklength/60;
-    }
-    
 }

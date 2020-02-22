@@ -27,10 +27,11 @@ public class Sim extends JPanel {
     public static ArrayList<Melon> melonList;
     public static ArrayList<GameObject> objectList;
     public static GameObject observed;
-    public static double ticklength, spawnChance;
-    public static int canvasWidth, canvasHeight, count;
+    public static double ticklength, spawnChance, timeElapsed;
+    public static int canvasWidth, canvasHeight, count, fontSize, maxGen;
     public static String[] traitNames = {"power", "cooldown", "friction"};
     public static boolean pause;
+    public static Font plain, bold;
     //public static boolean showHitboxes;
     
     Sim() {
@@ -39,9 +40,17 @@ public class Sim extends JPanel {
         canvasHeight = 650;
         // number of seconds in a tick
         ticklength = 10.0/1000.0;
-        count = 2;
+        count = 10;
+        timeElapsed = 0;
         // melon spawn chance per second
-        spawnChance = 0.5 * ticklength * 2;
+        spawnChance = 0.5 * ticklength * 10;
+        // maximum generation
+        maxGen = 0;
+        // formatting stuff
+        fontSize = 12;
+        plain = new Font("Courier", Font.PLAIN, fontSize);
+        bold = new Font("Courier", Font.BOLD, fontSize);
+        
         objectList = new ArrayList<GameObject>();
         puckList = new ArrayList<Puck>();
         adultList = new ArrayList<Adult>();
@@ -53,15 +62,11 @@ public class Sim extends JPanel {
     public void populate() {
         Adult newAdult;
         for (int i = 0; i < count; i++) {
-            // power, freq, friction, pointSmell, vagueSmell, melSizePref, untilBored
-            double[] defaultGenes = {500.0, 500.0, 500.0, 200.0, 500.0, 0.0, 500.0, 500.0, 500.0, 500.0, 500.0};
-            double[] randomGenes = {Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0};
-            newAdult = new Adult(randomGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 2000.0);
-            objectList.add(newAdult);
-            puckList.add(newAdult);
-            adultList.add(newAdult);
-            System.out.println(Math.log(10) + "," + Math.log(100));
-            System.out.println(Math.pow(10,-1) + "," + Math.pow(100,-1));
+            double[] defaultGenes = {500.0, 500.00, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 999.9};
+            // all Math.random() except for mutation chance which is 999.9 to start
+            double[] randomGenes = {Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, 999.9};
+            newAdult = new Adult(defaultGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 2000.0, 0);
+            newAdult.add();
         }
     }
     
@@ -69,8 +74,9 @@ public class Sim extends JPanel {
         Melon newMelon;
         if (Math.random() <= spawnChance) {
             newMelon = new Melon(Math.random()*canvasWidth, Math.random()*canvasHeight, Math.random()*200);
-            objectList.add(newMelon);
-            melonList.add(newMelon);
+            newMelon.add();
+            //objectList.add(newMelon);
+            //melonList.add(newMelon);
         }
     }
     
@@ -80,9 +86,10 @@ public class Sim extends JPanel {
             Egg newEgg = layEgg(a,b);
             a.children.add(newEgg);
             b.children.add(newEgg);
-            objectList.add(newEgg);
-            puckList.add(newEgg);
-            eggList.add(newEgg);            
+            newEgg.add();
+            //objectList.add(newEgg);
+            //puckList.add(newEgg);
+            //eggList.add(newEgg);            
         }
     }
     
@@ -94,12 +101,12 @@ public class Sim extends JPanel {
                 average(a.vision.geno, b.vision.geno),
                 average(a.smell.geno, b.smell.geno),
                 average(a.melSizePref.geno, b.melSizePref.geno),
-                average(a.sexWill.geno, b.sexWill.geno),
+                average(a.standards.geno, b.standards.geno),
                 average(a.childCount.geno, b.childCount.geno),
                 average(a.maturation.geno, b.maturation.geno),
                 average(a.mutationChance.geno, b.mutationChance.geno)};
         mutateGenes(newGenes);
-        Egg newEgg = new Egg(newGenes, a, b, average(a.x, b.x) + 10*Math.random(), average(a.y, b.y) + 10*Math.random(), 0);
+        Egg newEgg = new Egg(newGenes, a, b, average(a.x, b.x) + 10*Math.random(), average(a.y, b.y) + 10*Math.random(), 0, Math.max(a.gen, b.gen) + 1);
         return newEgg;
     }
     
@@ -111,6 +118,16 @@ public class Sim extends JPanel {
         }
         return genes;
     }
+    
+    public static void hatchEgg (Egg e) {
+        Adult newAdult;
+        newAdult = new Adult(e.genes, e.x, e.y, e.mass, e.gen);
+        newAdult.add();
+        observed = (observed != null && observed.equals(e)) ? newAdult : observed;
+        maxGen = (e.gen > maxGen) ? e.gen : maxGen; 
+        e.die();
+    }
+    
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -134,12 +151,19 @@ public class Sim extends JPanel {
         while (puckList.size() > 0) {
             simulation.repaint();
             if (!pause) {
-                for (int i = 0; i < adultList.size(); i++) {
-                    Adult a = adultList.get(i);
-                    a.go();
+                for (int i = 0; i < puckList.size(); i++) {
+                    Puck p = puckList.get(i);
+                    if (p instanceof Adult) { 
+                        Adult a = (Adult) p;
+                        a.go();
+                    } else if (p instanceof Egg) {
+                        Egg e = (Egg) p;
+                        e.go();
+                    }
                 }
                 spawnMelon();
                 TimeUnit.MILLISECONDS.sleep((long) (ticklength * 1000.0));
+                timeElapsed += Sim.ticklength / 60;
             }
         }
     }
@@ -148,26 +172,36 @@ public class Sim extends JPanel {
         return (a+b)/2;
     }
     
-    public static String formatTime(int hr, int min, int sec) {
+    protected static int[] formatTimeHelper(double time) {
+        int[] output = new int[] {
+                (int) time / 60,
+                (int) time % 60,
+                (int) (60 * (time - Math.floor(time)))
+        };
+        return output;
+    }
+    
+    public static String formatTime(double raw) {
+        int[] time = formatTimeHelper(raw);
         DecimalFormat df = new DecimalFormat("00");
-        String hours = df.format(hr);
-        String minutes = df.format(min);
-        String seconds = df.format(sec);
-        String time = (hr > 0) ? hours + ":" + minutes + ":" + seconds : minutes + ":" + seconds;
-        return time;
+        String hours = df.format(time[0]);
+        String minutes = df.format(time[1]);
+        String seconds = df.format(time[2]);
+        return (time[0] > 0) ? hours + ":" + minutes + ":" + seconds : minutes + ":" + seconds;
     }
     
     public static double translateMutationChance(double mutationChanceGeno) {
-        return mutationChanceGeno / 40000;
+        return mutationChanceGeno / 4000;
     }
+    
+    
 
-    public void paint(Graphics g) {
+    public void paint(Graphics g) {        
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.BLACK);
-        g.drawRect(0, 0, canvasWidth, canvasHeight);
+                RenderingHints.VALUE_ANTIALIAS_ON);        
+        
         for (int i = 0; i < objectList.size(); i++) {
             GameObject o = objectList.get(i);
             o.draw(g2d);
@@ -175,5 +209,14 @@ public class Sim extends JPanel {
                 o.displayInfo(g2d);
             }
         }
+        
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, canvasWidth, canvasHeight);
+        
+        g.setColor(Color.BLACK);
+        g.setFont(plain);
+        g.drawString("Max Generation: " + maxGen, 0, canvasHeight - fontSize * 3);
+        g.drawString("Population:     " + adultList.size(), 0, canvasHeight - fontSize * 2);
+        g.drawString("Elapsed Time:   " + formatTime(timeElapsed), 0, canvasHeight - fontSize * 1);
     }
 }
