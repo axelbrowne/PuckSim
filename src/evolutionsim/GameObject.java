@@ -108,7 +108,7 @@ public class GameObject {
             a.debug(g);
         } else if (this instanceof Egg) {
             Egg e = (Egg) this;
-            String time = Sim.formatTime(e.maturity);            
+            String time = Sim.formatTime(e.maturity);
             g.drawString("Mass:       " + Integer.toString((int)mass), 0, 0 + fontMetrics.getAscent());
             g.drawString("Maturity:   " + time, 0, fontMetrics.getAscent() + Sim.fontSize);
             g.drawString("Generation: " + e.gen, 0, fontMetrics.getAscent() + Sim.fontSize*2);

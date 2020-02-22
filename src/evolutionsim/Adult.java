@@ -90,7 +90,7 @@ public class Adult extends Puck {
     }
 
     private double mateScore(Adult potMate) {
-        return (1 / (((1/25) * children.size() * children.size()) + 1)) *
+        return (1 / (((1.75) * children.size() * children.size()) + 1)) *
                 (mass + potMate.mass + potMate.mass / getDistanceTo(potMate));
         // return (mass + (potMate.mass * potMate.mass)/getDistanceTo(potMate));
     }
@@ -222,7 +222,7 @@ public class Adult extends Puck {
             g.drawLine((int) x, (int) y, (int) see().x, (int) see().y);
         } else if (smell() != null) {
             g.setColor(Color.MAGENTA);
-            g.drawLine((int)x, (int)y, (int)(x + 15 * Math.cos(smell()[3])), (int)(y + 15 * Math.sin(smell()[3])));
+            g.drawLine((int)x, (int)y, (int)(x + 20 * Math.cos(smell()[3])), (int)(y + 20 * Math.sin(smell()[3])));
             //g.drawLine((int) x, (int) y, (int) (x + 15 * smell()[0]), (int) (y + 15 * smell()[1]));
         }
         g.setColor(Color.GREEN);

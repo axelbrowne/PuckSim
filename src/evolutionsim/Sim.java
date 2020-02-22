@@ -43,7 +43,7 @@ public class Sim extends JPanel {
         count = 10;
         timeElapsed = 0;
         // melon spawn chance per second
-        spawnChance = 0.5 * ticklength * 10;
+        spawnChance = 0.5 * ticklength * 100;
         // maximum generation
         maxGen = 0;
         // formatting stuff
@@ -65,7 +65,7 @@ public class Sim extends JPanel {
             double[] defaultGenes = {500.0, 500.00, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 999.9};
             // all Math.random() except for mutation chance which is 999.9 to start
             double[] randomGenes = {Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, 999.9};
-            newAdult = new Adult(defaultGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 2000.0, 0);
+            newAdult = new Adult(randomGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 2000.0, 0);
             newAdult.add();
         }
     }

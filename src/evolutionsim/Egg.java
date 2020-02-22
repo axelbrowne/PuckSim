@@ -46,7 +46,7 @@ public class Egg extends Puck {
         drawY = y - radius;
         //Color tail = new Color ((int)(power.geno * 0.255), (int)(freq.geno * 0.255), (int)(friction.geno * 0.255));
         //Color body = new Color ((int)(vision.geno * 0.255), (int)(smell.geno * 0.255), (int)(melSizePref.geno * 0.255));
-        Color shell = new Color (255 - (int) (mutationChance.geno * 0.255), 255, 255 - (int) (mutationChance.geno * 0.255));
+        Color shell = new Color (255 - (int) (mutationChance.geno * 0.255 / 3), 255, 255 - (int) (mutationChance.geno * 0.255 / 3));
         Color one = new Color ((int) (power.geno * 0.255), (int) (freq.geno * 0.255),(int) (friction.geno * 0.255));
         Color two = new Color ((int) (vision.geno * 0.255), (int) (smell.geno * 0.255), (int) (melSizePref.geno * 0.255));
         Color three = new Color((int) (standards.geno * 0.255), (int) (childCount.geno * 0.255), (int) (maturation.geno * 0.255));
