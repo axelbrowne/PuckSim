@@ -6,8 +6,7 @@ import java.util.ArrayList;
 public class Adult extends Puck {
 
     double cooldown;
-    ArrayList<Egg> children;
-    ArrayList<Adult> mateable;
+    ArrayList<Egg> offspring;
     double age;
     Adult mate;
 
@@ -16,8 +15,7 @@ public class Adult extends Puck {
         translate();
         cooldown = 0;
         age = 0;
-        children = new ArrayList<Egg>();
-        mateable = new ArrayList<Adult>();
+        offspring = new ArrayList<Egg>();
         Adult mate = null;
     }
 
@@ -27,7 +25,6 @@ public class Adult extends Puck {
         }
         if (cooldown <= 0) {
             v += power.pheno * Sim.ticklength / mass;
-            determineMateable();
             pursue();
             seek();
             mass -= (power.pheno / 2000000);
@@ -61,45 +58,52 @@ public class Adult extends Puck {
         }
     }
 
-    public void determineMateable() {
-        if (children.size() > 0) {
-            return;
+    public ArrayList<Adult> determineMateable() {
+        if (offspring.size() > 0) {
+            return null;
         }
+        ArrayList<Adult> mateable = new ArrayList<Adult>();
         for (Adult a : Sim.adultList) {
-            if (a.children.size() == 0 && !a.equals(this)) {
+            if (a.offspring.size() == 0 && !a.equals(this)) {
                 if (mateScore(a) > standards.pheno) {
                     mateable.add(a);
                 }
             }
         }
+        return mateable;
     }
 
     public void pursue() {
-        for (Adult a : mateable) {
-            if (a.mateable.contains(this) && Sim.average(childCount.pheno, a.childCount.pheno) > 0) {
-                mate = a;
-                a.mate = this;
-                mateable = new ArrayList<Adult>();
-                a.mateable = new ArrayList<Adult>();
+        ArrayList<Adult> list = determineMateable();
+        if (list == null) { return; }
+        ArrayList<Adult> mateList = new ArrayList<Adult>();
+        for (Adult a : list) {
+            mateList = a.determineMateable();
+            if (offspring.size() == 0 && a.offspring.size() == 0) {
+                if (mateList.contains(this) && Sim.average(childCount.pheno, a.childCount.pheno) > 0) {
+                    mate = a;
+                    a.mate = this;
+                } 
             }
         }
     }
 
     public void mate() {
-        heading = getHeadingTowards(mate);
+        if (offspring.size() == 0) {
+            heading = getHeadingTowards(mate);
+        }
     }
 
     private double mateScore(Adult potMate) {
-        return (1 / (((1.75) * children.size() * children.size()) + 1)) *
-                (mass + potMate.mass + potMate.mass / getDistanceTo(potMate));
+        return (mass + 2 * potMate.mass) / (1 + (0.01 * getDistanceTo(potMate)));
+        //return (1 / ((2 * children.size() * children.size()) + 1)) *
+        //        (mass + 2 * potMate.mass) / (1 + (0.1 * getDistanceTo(potMate)));
         // return (mass + (potMate.mass * potMate.mass)/getDistanceTo(potMate));
     }
 
     public void seek() {
         if (mate != null) {
             mate();
-        } else if (children.size() > 0) {
-            seekFood();
         } else {
             seekFood();
         }
@@ -184,7 +188,7 @@ public class Adult extends Puck {
             return;
         }
         for (Adult a : Sim.adultList) {
-            if (getDistanceTo(a) <= radius + a.radius && mate == a) {
+            if (getDistanceTo(a) <= radius + a.radius && mate == a && a.mate == this) {
                 Sim.layEggs(this, a);
                 mate = null;
                 a.mate = null;
@@ -199,9 +203,9 @@ public class Adult extends Puck {
         double massPer;
         for (Melon m : Sim.melonList) {
             if (getDistanceTo(m) <= radius + m.radius) {
-                massPer = m.mass / children.size();
-                for (Egg c : children) {
-                    c.mass += massPer;
+                massPer = m.mass / offspring.size();
+                for (Egg o : offspring) {
+                    o.mass += massPer;
                 }
                 mass += m.mass;
                 m.die();
@@ -226,8 +230,8 @@ public class Adult extends Puck {
             //g.drawLine((int) x, (int) y, (int) (x + 15 * smell()[0]), (int) (y + 15 * smell()[1]));
         }
         g.setColor(Color.GREEN);
-        for (int i = 0; i < children.size(); i++) {
-            Egg c = children.get(i);
+        for (int i = 0; i < offspring.size(); i++) {
+            Egg c = offspring.get(i);
             g.drawLine((int)x, (int)y, (int)c.x, (int)c.y);
         }
     }
@@ -240,28 +244,28 @@ public class Adult extends Puck {
         Color body = new Color((int) (standards.geno * 0.256), (int) (childCount.geno * 0.256),
                 (int) (maturation.geno * 0.256));
         g.setColor(tail);
+        int[] xDraw = { (int) ((x) + Math.cos(heading) * radius * (3 / 4)),
+                (int) ((x) - Math.cos(heading + Math.PI / 6)
+                        * (radius + radius * (power.geno / 1000) + radius * (cooldown / (freq.pheno + 0.1)))),
+                (int) ((x) - Math.cos(heading - Math.PI / 6)
+                        * (radius + radius * (power.geno / 1000) + radius * (cooldown / (freq.pheno + 0.1)))) };
+        int[] yDraw = { (int) ((y) + Math.sin(heading) * radius * (3 / 4)),
+                (int) ((y) - Math.sin(heading + Math.PI / 6)
+                        * (radius + radius * (power.geno / 1000) + radius * (cooldown / (freq.pheno + 0.1)))),
+                (int) ((y) - Math.sin(heading - Math.PI / 6)
+                        * (radius + radius * (power.geno / 1000) + radius * (cooldown / (freq.pheno + 0.1)))) };
         /**
         int[] xDraw = { (int) ((x) + Math.cos(heading) * radius * (3 / 4)),
                 (int) ((x) - Math.cos(heading + Math.PI / 6)
-                        * (radius + radius * (1.5 * power.geno / 1000) + radius * (cooldown / freq.pheno + 0.5))),
+                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))),
                 (int) ((x) - Math.cos(heading - Math.PI / 6)
-                        * (radius + radius * (1.5 * power.geno / 1000) + radius * (cooldown / freq.pheno + 0.5))) };
+                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))) };
         int[] yDraw = { (int) ((y) + Math.sin(heading) * radius * (3 / 4)),
                 (int) ((y) - Math.sin(heading + Math.PI / 6)
-                        * (radius + radius * (1.5 * power.geno / 1000) + radius * (cooldown / freq.pheno + 0.5))),
+                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))),
                 (int) ((y) - Math.sin(heading - Math.PI / 6)
-                        * (radius + radius * (1.5 * power.geno / 1000) + radius * (cooldown / freq.pheno + 0.5))) };
+                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))) };
         **/
-        int[] xDraw = { (int) ((x) + Math.cos(heading) * radius * (3 / 4)),
-                (int) ((x) - Math.cos(heading + Math.PI / 6)
-                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))),
-                (int) ((x) - Math.cos(heading - Math.PI / 6)
-                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))) };
-        int[] yDraw = { (int) ((y) + Math.sin(heading) * radius * (3 / 4)),
-                (int) ((y) - Math.sin(heading + Math.PI / 6)
-                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))),
-                (int) ((y) - Math.sin(heading - Math.PI / 6)
-                        * (radius + radius * (cooldown / (freq.pheno + 0.1)))) };
         g.fillPolygon(xDraw, yDraw, 3);
         g.setColor(body);
         g.fillOval((int) drawX, (int) drawY, (int) radius * 2, (int) radius * 2);

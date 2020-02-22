@@ -65,7 +65,7 @@ public class Puck extends GameObject {
         //
         melSizePref.pheno = (-500 + melSizePref.geno) / 500;
         //
-        standards.pheno = standards.geno * 13;
+        standards.pheno = standards.geno  * 10;
         childCount.pheno = childCount.geno / 200;
         maturation.pheno = maturation.geno / 2000;
         // we do this because we use this in a few different spots

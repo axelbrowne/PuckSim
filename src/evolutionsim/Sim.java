@@ -40,7 +40,7 @@ public class Sim extends JPanel {
         canvasHeight = 650;
         // number of seconds in a tick
         ticklength = 10.0/1000.0;
-        count = 10;
+        count = 50;
         timeElapsed = 0;
         // melon spawn chance per second
         spawnChance = 0.5 * ticklength * 100;
@@ -65,11 +65,11 @@ public class Sim extends JPanel {
             double[] defaultGenes = {500.0, 500.00, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 999.9};
             // all Math.random() except for mutation chance which is 999.9 to start
             double[] randomGenes = {Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, 999.9};
-            newAdult = new Adult(randomGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 2000.0, 0);
+            newAdult = new Adult(randomGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 1500.0, 0);
             newAdult.add();
         }
     }
-    
+
     public static void spawnMelon() {
         Melon newMelon;
         if (Math.random() <= spawnChance) {
@@ -84,8 +84,8 @@ public class Sim extends JPanel {
         int numChild = (int) Math.round(average(a.childCount.pheno, b.childCount.pheno));
         for (int i = 0; i < numChild; i++) {
             Egg newEgg = layEgg(a,b);
-            a.children.add(newEgg);
-            b.children.add(newEgg);
+            a.offspring.add(newEgg);
+            b.offspring.add(newEgg);
             newEgg.add();
             //objectList.add(newEgg);
             //puckList.add(newEgg);

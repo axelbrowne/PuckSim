@@ -33,14 +33,14 @@ public class GameObject {
             if (this instanceof Adult) {
                 Sim.adultList.remove(this);
                 Adult a = (Adult) this;
-                for (int i = 0; i < a.children.size(); i++) {
-                    a.children.get(i).parents.remove(a);
+                for (int i = 0; i < a.offspring.size(); i++) {
+                    a.offspring.get(i).parents.remove(a);
                 }
                 
             } else if (this instanceof Egg) {
                 Egg e = (Egg) this;
                 for (int i = 0; i < e.parents.size(); i++) {
-                    e.parents.get(i).children.remove(e);
+                    e.parents.get(i).offspring.remove(e);
                 }
                 Sim.eggList.remove(this);
             }
@@ -91,7 +91,7 @@ public class GameObject {
             g.drawString("Generation: " + a.gen, 0, fontMetrics.getAscent() + Sim.fontSize*0);
             g.drawString("Age:        " + time, 0, fontMetrics.getAscent() + Sim.fontSize*1);
             g.drawString("Mass:       " + Integer.toString((int)mass), 0, 0 + fontMetrics.getAscent() + Sim.fontSize*2);
-            g.drawString("Offspring:  " + a.children.size(), 0, fontMetrics.getAscent() + Sim.fontSize*3);
+            g.drawString("Offspring:  " + a.offspring.size(), 0, fontMetrics.getAscent() + Sim.fontSize*3);
             g.setFont(Sim.bold);
             g.drawString("TRAITS", 0, fontMetrics.getAscent() + Sim.fontSize*5);
             g.setFont(Sim.plain);
