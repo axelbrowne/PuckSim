@@ -57,8 +57,7 @@ public class Sim extends JPanel {
         Adult newAdult;
         for (int i = 0; i < count; i++) {
             // Used for tweaking phenotype expression.
-            // double[] defaultGenes = {500.0, 500.00, 500.0, 500.0, 500.0, 500.0, 500.0,
-            // 500.0, 500.0, 500.0, 999.9};
+            // double[] defaultGenes = {500.0, 500.00, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 999.9};
             // All traits randomized except for mutation chance which is 999.9 to start (for
             // lots of genetic variation at the start).
             double[] randomGenes = { Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0,
@@ -125,7 +124,8 @@ public class Sim extends JPanel {
         simulation.setSize(canvasWidth, canvasHeight);
         simulation.setVisible(true);
         simulation.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // frame.pack();
+        // didn't know what this did before, still don't know what it does.
+        // simulation.pack();
         simulation.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         simulation.addMouseListener(new InputListener());
