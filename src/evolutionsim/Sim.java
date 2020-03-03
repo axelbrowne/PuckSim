@@ -1,69 +1,63 @@
+// TODO add more comments everywhere!
+
 package evolutionsim;
 
 import java.awt.*;
 import java.text.DecimalFormat;
-
 import javax.swing.JFrame;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JPanel;
 
-/**
- * GENERAL COMMENTS
- *******************
- * Might be faster to use LinkedList
- * instead of ArrayList for iterating over
- * the different object types.
- */
-
-
 public class Sim extends JPanel {
+    // DYNAMIC \\
+    public static double timeElapsed;
+    public static int maxGen;
     
-    // no idea what this does
+    // CONSTANTS \\
+    // Don't really know what this does, probably something to do with JPanel.
     private static final long serialVersionUID = 1L;
-    public static ArrayList<Puck> puckList;
-    public static ArrayList<Adult> adultList;
-    public static ArrayList<Egg> eggList;
-    public static ArrayList<Melon> melonList;
-    public static ArrayList<GameObject> objectList;
-    public static GameObject observed;
-    public static double ticklength, spawnChance, timeElapsed;
-    public static int canvasWidth, canvasHeight, count, fontSize, maxGen;
-    public static String[] traitNames = {"power", "cooldown", "friction"};
-    public static boolean pause;
-    public static Font plain, bold;
-    //public static boolean showHitboxes;
+    // Lists of different GameObject types that we use when iterating for
+    // certain types.
+    // TODO think about if using LinkedList instead of ArrayList would be more efficient
+    public static ArrayList<Puck> puckList = new ArrayList<Puck>();
+    public static ArrayList<Adult> adultList = new ArrayList<Adult>();
+    public static ArrayList<Egg> eggList = new ArrayList<Egg>();
+    public static ArrayList<Melon> melonList = new ArrayList<Melon>();
+    public static ArrayList<GameObject> objectList = new ArrayList<GameObject>();
+    public static GameObject observed = null;
+
+    public static boolean pause = false;
     
-    Sim() {
-        //width and height of the square canvas
-        canvasWidth = 1250;
-        canvasHeight = 650;
-        // number of seconds in a tick
-        ticklength = 10.0/1000.0;
-        count = 50;
-        timeElapsed = 0;
-        // melon spawn chance per second
-        spawnChance = 0.5 * ticklength * 100;
-        // maximum generation
-        maxGen = 0;
-        // formatting stuff
-        fontSize = 12;
-        plain = new Font("Courier", Font.PLAIN, fontSize);
-        bold = new Font("Courier", Font.BOLD, fontSize);
+    // Width and height of the canvas or Sim "field"
+    public static int canvasWidth = 575;
+    public static int canvasHeight = 575;
+    // Number of seconds in a tick
+    public static double tickLength = 10.0/1000.0;
+    // Population of Adults at the start of the Sim
+    public static int count = 50;
+    // Chance of a Melon spawning at per second
+    public static double spawnChance = tickLength * 50;
+    // Formatting constants.
+    public static int fontSize = 12;
+    public static Font plain = new Font("Courier", Font.PLAIN, fontSize);
+    public static Font bold = new Font("Courier", Font.BOLD, fontSize);
         
-        objectList = new ArrayList<GameObject>();
-        puckList = new ArrayList<Puck>();
-        adultList = new ArrayList<Adult>();
-        eggList = new ArrayList<Egg>();
-        melonList = new ArrayList<Melon>();
+    /**
+     * Constructor
+     */
+    Sim() {
+        timeElapsed = 0;
+        maxGen = 0;
         populate();
     }
     
     public void populate() {
         Adult newAdult;
         for (int i = 0; i < count; i++) {
-            double[] defaultGenes = {500.0, 500.00, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 999.9};
-            // all Math.random() except for mutation chance which is 999.9 to start
+            // Used for tweaking phenotype expression.
+            // double[] defaultGenes = {500.0, 500.00, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 999.9};
+            // All traits randomized except for mutation chance which is 999.9 to start (for lots of genetic variation at the start).
             double[] randomGenes = {Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, Math.random() * 1000.0, 999.9};
             newAdult = new Adult(randomGenes, Math.random()*canvasWidth, Math.random()*canvasHeight, 1500.0, 0);
             newAdult.add();
@@ -75,8 +69,6 @@ public class Sim extends JPanel {
         if (Math.random() <= spawnChance) {
             newMelon = new Melon(Math.random()*canvasWidth, Math.random()*canvasHeight, Math.random()*200);
             newMelon.add();
-            //objectList.add(newMelon);
-            //melonList.add(newMelon);
         }
     }
     
@@ -86,10 +78,7 @@ public class Sim extends JPanel {
             Egg newEgg = layEgg(a,b);
             a.offspring.add(newEgg);
             b.offspring.add(newEgg);
-            newEgg.add();
-            //objectList.add(newEgg);
-            //puckList.add(newEgg);
-            //eggList.add(newEgg);            
+            newEgg.add();           
         }
     }
     
@@ -144,10 +133,6 @@ public class Sim extends JPanel {
         simulation.addMouseListener(new InputListener());
         simulation.addKeyListener(new InputListener());
         
-        //JTextField console = new JTextField();
-        //console.setText("test");
-        //simulation.add(console);
-        
         while (puckList.size() > 0) {
             simulation.repaint();
             if (!pause) {
@@ -162,8 +147,8 @@ public class Sim extends JPanel {
                     }
                 }
                 spawnMelon();
-                TimeUnit.MILLISECONDS.sleep((long) (ticklength * 1000.0));
-                timeElapsed += Sim.ticklength / 60;
+                TimeUnit.MILLISECONDS.sleep((long) (tickLength * 1000.0));
+                timeElapsed += Sim.tickLength / 60;
             }
         }
     }
