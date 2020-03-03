@@ -25,7 +25,7 @@ public class Egg extends Puck {
         if (maturity >= maturation.pheno) {
             Sim.hatchEgg(this);
         }
-        maturity += Sim.ticklength/60;
+        maturity += Sim.tickLength/60;
         updateRadius();
     }
     

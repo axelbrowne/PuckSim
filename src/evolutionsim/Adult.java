@@ -24,19 +24,19 @@ public class Adult extends Puck {
             return;
         }
         if (cooldown <= 0) {
-            v += power.pheno * Sim.ticklength / mass;
+            v += power.pheno * Sim.tickLength / mass;
             pursue();
             seek();
             mass -= (power.pheno / 2000000);
             cooldown = freq.pheno;
         }
-        cooldown -= Sim.ticklength;
+        cooldown -= Sim.tickLength;
         if (mass <= 0) {
             die();
         } else {
-            mass -= Sim.ticklength * (mass / 100);
+            mass -= Sim.tickLength * (mass / 100);
         }
-        age += Sim.ticklength / 60;
+        age += Sim.tickLength / 60;
         updateRadius();
     }
 
@@ -48,11 +48,11 @@ public class Adult extends Puck {
     }
 
     public void motion() {
-        v = Math.max(0, v + ((-0.1 * v * v) + friction.pheno * Sim.ticklength) / mass);
+        v = Math.max(0, v + ((-0.1 * v * v) + friction.pheno * Sim.tickLength) / mass);
         xv = Math.cos(heading) * v;
         yv = Math.sin(heading) * v;
-        x = x + xv * (Sim.ticklength);
-        y = y + yv * (Sim.ticklength);
+        x = x + xv * (Sim.tickLength);
+        y = y + yv * (Sim.tickLength);
         if ((int) x < 0 || (int) y < 0 || (int) x > Sim.canvasWidth || (int) y > Sim.canvasHeight) {
             heading += Math.PI;
         }
