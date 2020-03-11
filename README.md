@@ -1,4 +1,5 @@
 # PuckSim
 
-<a href="https://youtu.be/AvIlGguYQxE" target="_blank"><img src="https://imgur.com/a/OOJOOtx" 
-alt="v1.0 Explanation Video" width="262" height="262" border="10" /></a>
+Inspired by SethBling's "Genetic Evolution in Minecraft 1.14" [video](https://www.youtube.com/watch?v=9aIp5DdnKwM).
+
+Explanation for v1.0 [video](https://youtu.be/AvIlGguYQxE).
