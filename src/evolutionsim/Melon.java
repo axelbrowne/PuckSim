@@ -2,7 +2,7 @@ package evolutionsim;
 
 import java.awt.*;
 
-public class Melon extends GameObject {
+public class Melon extends Agent {
 
     Melon(double xcor, double ycor, double m) {
         super(xcor, ycor, m);

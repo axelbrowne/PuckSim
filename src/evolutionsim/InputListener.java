@@ -7,6 +7,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JFrame;
+
 public class InputListener implements KeyListener, MouseListener {
 
     @Override
@@ -32,10 +34,11 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Point m = MouseInfo.getPointerInfo().getLocation();
+    	int x = e.getX();
+    	int y = e.getY();
         for (int i = 0; i < Sim.puckList.size(); i++) {
             Puck p = Sim.puckList.get(i);
-            if (Math.hypot((m.x - p.x), (m.y - 23 - p.y)) < p.radius) {
+            if (Math.hypot((x - p.x), (y - p.y)) < p.radius) {
                 Sim.observed = p;
                 break;
             }

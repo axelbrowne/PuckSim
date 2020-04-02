@@ -2,7 +2,7 @@ package evolutionsim;
 
 //import evolutionsim.EvolutionSim.Puck.Gene;
 
-public class Puck extends GameObject {
+public class Puck extends Agent {
 
     public class Gene {
         double geno;
