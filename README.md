@@ -20,5 +20,4 @@ mutation; stats and agent behavior are affected by these genetic traits.
   * awt
 
 ## Contributors
-* [Damián Axel Browne](https://github.com/damianbrowne) 
-
+* [Damián Axel Browne](https://github.com/damianbrowne)
