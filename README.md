@@ -6,7 +6,7 @@ A passion project inspired by my interests in genetic evolution, agent modeling,
 emergient special behaviors, and a video of [Genetic Evolution in Minecraft 1.14](https://www.youtube.com/watch?v=9aIp5DdnKwM)
 by Sethbling on YouTube.
 
-## Description:
+## Description
 PuckSim visually models the multi-generational genetic inheritance of fish-resembling
 “puck” agents in Java, using its Abstract Window Toolkit library. Agents seek food using "smell"
 and "sight," mate with other agents, and nurse offspring to adulthood in a two-dimensional,
@@ -19,6 +19,6 @@ mutation; stats and agent behavior are affected by these genetic traits.
 * Libraries
   * awt
 
-## Contributors:
-* [Damián Axel Browne](github.com/damianbrowne) 
+## Contributors
+* [Damián Axel Browne](https://github.com/damianbrowne) 
 
