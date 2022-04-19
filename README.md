@@ -12,12 +12,3 @@ PuckSim visually models the multi-generational genetic inheritance of fish-resem
 and "sight," mate with other agents, and nurse offspring to adulthood in a two-dimensional,
 top-down, grid-less environment. Agents inherit traits from their parents with a chance of
 mutation; stats and agent behavior are affected by these genetic traits.
-
-## Languages & Libraries
-* Languages
-  * Java
-* Libraries
-  * awt
-
-## Contributors
-* [Damián Axel Browne](https://github.com/damianbrowne)
